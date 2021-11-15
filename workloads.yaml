@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: queue
+spec:
+   selector:
+     matchLabels:
+        app: queue
+   replicas: 1
+   template: #template of the pods(better called pods than template)
+     metadata:
+        #you don't need a name for the pod here     
+        labels:
+          app: queue
+     spec:
+        containers:  
+        - name: queue #changing the name doesn't change anything because it's something internel  
+          image: richardchesterwood/k8s-fleetman-queue:release2
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: position-simulator
+spec:
+   selector:
+     matchLabels:
+        app: position-simulator
+   replicas: 1
+   template: #template of the pods(better called pods than template)
+     metadata:
+        #you don't need a name for the pod here     
+        labels:
+          app: position-simulator
+     spec:
+        containers:  
+        - name: position-simulator
+          image: richardchesterwood/istio-fleetman-position-simulator:release2 
+
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: position-tracker
+spec:
+   selector:
+     matchLabels:
+        app: position-tracker
+   replicas: 1
+   template: #template of the pods(better called pods than template)
+     metadata:
+        #you don't need a name for the pod here     
+        labels:
+          app: position-tracker
+     spec:
+        containers:  
+        - name: position-tracker
+          image: richardchesterwood/istio-fleetman-position-tracker:release3
+
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice  
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: api-gateway
+spec:
+   selector:
+     matchLabels:
+        app: api-gateway
+   replicas: 1
+   template: #template of the pods(better called pods than template)
+     metadata:
+        #you don't need a name for the pod here     
+        labels:
+          app: api-gateway
+     spec:
+        containers:  
+        - name: api-gateway
+          image: richardchesterwood/istio-fleetman-api-gateway:release2
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice            
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: webapp
+spec:
+   selector:
+     matchLabels:
+        app: webapp
+   replicas: 1
+   template: #template of the pods(better called pods than template)
+     metadata:
+        #you don't need a name for the pod here     
+        labels:
+          app: webapp
+     spec:
+        containers:  
+        - name: webapp #changing the name doesn't change anything because it's something internel  
+          image: richardchesterwood/k8s-fleetman-webapp-angular:realese1
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production-microservice       
+
+            
